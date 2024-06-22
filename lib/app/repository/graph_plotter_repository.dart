@@ -3,7 +3,7 @@ import 'package:graphview_plotter/app/model/graph_model.dart';
 import 'package:graphview_plotter/network/rest_api_client.dart';
 import 'package:graphview_plotter/network/rest_response.dart';
 
-class Repository {
+class GraphPlotterRepository {
   Future<RestResponse<GraphModel>> fetchGraphDetails() async {
     try {
       final headers = {
@@ -47,7 +47,11 @@ class Repository {
       return RestResponse(response: GraphModel.fromMap(response));
     } catch (e, st) {
       return RestResponse(
-        exception: FatalException(exception: e, message: '', stackTrace: st),
+        exception: FatalException(
+          exception: e,
+          message: 'Something went wrong!![PAR-GRA-MOD]',
+          stackTrace: st,
+        ),
       );
     }
   }

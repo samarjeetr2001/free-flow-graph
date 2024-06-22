@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:graphview_plotter/app/model/link_model.dart';
+import 'package:graphview_plotter/app/model/node_model.dart';
 
 class GraphModel {
   final List<GraphNodeModel> nodes;
@@ -42,124 +44,6 @@ class GraphModel {
 
   @override
   int get hashCode => nodes.hashCode ^ links.hashCode ^ details.hashCode;
-}
-
-class GraphNodeModel {
-  final String id;
-  final int distance;
-  final String catagory;
-  final String? ancestor;
-  final UserModel userDetails;
-  GraphNodeModel({
-    required this.id,
-    required this.distance,
-    required this.catagory,
-    this.ancestor,
-    required this.userDetails,
-  });
-
-  factory GraphNodeModel.fromMap(Map<String, dynamic> map) {
-    return GraphNodeModel(
-      id: map['id']?.toString() ?? '',
-      distance: map['distance']?.toInt() ?? 0,
-      catagory: map['catagory'] ?? '',
-      ancestor: map['ancestor'],
-      userDetails: UserModel.fromMap(map['data']?['details'] ?? {}),
-    );
-  }
-
-  @override
-  String toString() {
-    return 'GraphNodeModel(id: $id, distance: $distance, catagory: $catagory, ancestor: $ancestor, userDetails: $userDetails)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is GraphNodeModel &&
-        other.id == id &&
-        other.distance == distance &&
-        other.catagory == catagory &&
-        other.ancestor == ancestor &&
-        other.userDetails == userDetails;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^
-        distance.hashCode ^
-        catagory.hashCode ^
-        ancestor.hashCode ^
-        userDetails.hashCode;
-  }
-}
-
-class UserModel {
-  final String name;
-  final String? profileImg;
-  UserModel({
-    required this.name,
-    this.profileImg,
-  });
-
-  factory UserModel.fromMap(Map<String, dynamic> map) {
-    return UserModel(
-      name: map['display_name'] ?? '',
-      profileImg: map['display_picture'],
-    );
-  }
-
-  @override
-  String toString() => 'UserModel(name: $name, profileImg: $profileImg)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is UserModel &&
-        other.name == name &&
-        other.profileImg == profileImg;
-  }
-
-  @override
-  int get hashCode => name.hashCode ^ profileImg.hashCode;
-}
-
-class GraphLinkModel {
-  final String source;
-  final String target;
-  final String category;
-  GraphLinkModel({
-    required this.source,
-    required this.target,
-    required this.category,
-  });
-
-  factory GraphLinkModel.fromMap(Map<String, dynamic> map) {
-    return GraphLinkModel(
-      source: map['source']?.toString() ?? '',
-      target: map['target']?.toString() ?? '',
-      category: map['category'] ?? '',
-    );
-  }
-
-  @override
-  String toString() =>
-      'GraphLinkModel(source: $source, target: $target, category: $category)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is GraphLinkModel &&
-        other.source == source &&
-        other.target == target &&
-        other.category == category;
-  }
-
-  @override
-  int get hashCode => source.hashCode ^ target.hashCode ^ category.hashCode;
 }
 
 class GraphDetailsModel {
