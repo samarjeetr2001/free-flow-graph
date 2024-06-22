@@ -1,9 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_force_directed_graph/flutter_force_directed_graph.dart'
+    as ffdg;
 import 'package:get/get.dart';
 import 'package:graphview_plotter/app/controller/graph_plotter_controller.dart';
 import 'package:graphview_plotter/app/model/graph_model.dart';
+import 'package:graphview_plotter/app/model/node_model.dart';
+import 'package:graphview_plotter/app/view/widget/node_widget.dart';
 import 'package:graphview_plotter/core/enum.dart';
 
 import 'widget/error_widget.dart';
@@ -34,9 +38,12 @@ class GraphPlotterView extends GetView<GraphPlotterController> {
                 ),
               );
             case DataRetrievalStatus.loaded:
-              return _View(
+              return _ForceDirectedGraphWidget(
                 graphData: controller.graphData!.response!,
               );
+            // return _GraphView(
+            //   graphData: controller.graphData!.response!,
+            // );
           }
         }),
       ),
@@ -44,9 +51,56 @@ class GraphPlotterView extends GetView<GraphPlotterController> {
   }
 }
 
-class _View extends StatelessWidget {
+class _ForceDirectedGraphWidget extends StatelessWidget {
   final GraphModel graphData;
-  const _View({required this.graphData});
+  const _ForceDirectedGraphWidget({required this.graphData});
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<GraphPlotterController>();
+    return GestureDetector(
+      onScaleStart: (ScaleStartDetails details) {
+        controller.previousScale = controller.ffdgController.scale;
+      },
+      onScaleUpdate: (ScaleUpdateDetails details) {
+        controller.ffdgController.scale =
+            controller.previousScale * details.scale;
+      },
+      onScaleEnd: (ScaleEndDetails details) {
+        controller.previousScale = 1.0;
+      },
+      child: ffdg.ForceDirectedGraphWidget<GraphNodeModel>(
+        controller: controller.ffdgController,
+        nodesBuilder: (BuildContext context, nodeDetails) {
+          return NodeWidget(
+            nodeDetails: nodeDetails,
+            size: 20 + 20 * (controller.maxDistance - nodeDetails.distance),
+          );
+        },
+        edgesBuilder: (
+          BuildContext context,
+          GraphNodeModel? a,
+          GraphNodeModel? b,
+          double distance,
+        ) {
+          return Container(
+            width: distance,
+            height: 2,
+            color: a?.userDetails == controller.selectedUser.value
+                ? Colors.green[200]
+                : b?.userDetails == controller.selectedUser.value
+                    ? Colors.red[200]
+                    : Colors.grey,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _GraphView extends StatelessWidget {
+  final GraphModel graphData;
+  const _GraphView({required this.graphData});
 
   @override
   Widget build(BuildContext context) {
@@ -68,50 +122,9 @@ class _View extends StatelessWidget {
           builder: (node) {
             final id = node.key!.value;
             final nodeDetails = graphData.nodes.firstWhere((n) => n.id == id);
-            final user = nodeDetails.userDetails;
-            final size =
-                50 + 20 * (controller.maxDistance - nodeDetails.distance);
-            return GestureDetector(
-              onTap: () {
-                controller.selectedUser.value = user;
-              },
-              child: Obx(
-                () {
-                  final selectedUser = controller.selectedUser.value;
-                  return Container(
-                    padding:
-                        selectedUser == user ? const EdgeInsets.all(10) : null,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.red[900],
-                    ),
-                    child: Container(
-                      width: size,
-                      height: size,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[200],
-                        image: user.profileImg != null
-                            ? DecorationImage(
-                                image: NetworkImage(user.profileImg!),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: user.profileImg != null
-                          ? null
-                          : Center(
-                              child: Text(
-                                user.name
-                                    .substring(0, min(user.name.length, 4))
-                                    .toUpperCase(),
-                              ),
-                            ),
-                    ),
-                  );
-                },
-              ),
+            return NodeWidget(
+              nodeDetails: nodeDetails,
+              size: 50 + 20 * (controller.maxDistance - nodeDetails.distance),
             );
           },
         ),
