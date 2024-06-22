@@ -20,7 +20,7 @@ class GraphPlotterView extends GetView<GraphPlotterController> {
         title: const Text('Free Flow Graph'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.only(top: 20),
         child: Obx(() {
           final status = controller.graphDataRetrievalStatus.value;
           switch (status) {
