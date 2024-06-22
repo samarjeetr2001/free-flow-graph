@@ -76,20 +76,21 @@ class _View extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[200],
-                image: nodeDetails.userDetails.profileImg != null
+                image: user.profileImg != null
                     ? DecorationImage(
                         image: NetworkImage(user.profileImg!),
                       )
                     : null,
               ),
-              child: Center(
-                child: Text(
-                  user.name
-                      .substring(0, min(user.name.length, 4))
-                      .toUpperCase(),
-                      
-                ),
-              ),
+              child: user.profileImg != null
+                  ? null
+                  : Center(
+                      child: Text(
+                        user.name
+                            .substring(0, min(user.name.length, 4))
+                            .toUpperCase(),
+                      ),
+                    ),
             );
           },
         ),
