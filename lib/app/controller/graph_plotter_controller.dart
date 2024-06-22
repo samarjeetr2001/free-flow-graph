@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:graphview_plotter/app/model/graph_model.dart';
+import 'package:graphview_plotter/app/model/user_model.dart';
 import 'package:graphview_plotter/app/repository/graph_plotter_repository.dart';
 import 'package:graphview_plotter/core/enum.dart';
 import 'package:graphview_plotter/network/rest_response.dart';
@@ -10,6 +11,8 @@ class GraphPlotterController extends GetxController {
   final graphDataRetrievalStatus = DataRetrievalStatus.loading.obs;
   RestResponse<GraphModel>? graphData;
   double maxDistance = 5;
+
+  final Rxn<UserModel> selectedUser = Rxn();
 
   @override
   void onReady() {
