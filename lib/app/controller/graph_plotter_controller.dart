@@ -55,9 +55,6 @@ class GraphPlotterController extends GetxController {
       }
     }
     ffdgController.scale = 0.6;
-
-    ffdgController.needUpdate();
-    update();
   }
 
   @override

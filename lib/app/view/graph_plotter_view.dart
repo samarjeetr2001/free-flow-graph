@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_force_directed_graph/flutter_force_directed_graph.dart'
     as ffdg;
@@ -51,13 +49,28 @@ class GraphPlotterView extends GetView<GraphPlotterController> {
   }
 }
 
-class _ForceDirectedGraphWidget extends StatelessWidget {
+class _ForceDirectedGraphWidget extends StatefulWidget {
   final GraphModel graphData;
   const _ForceDirectedGraphWidget({required this.graphData});
 
   @override
+  State<_ForceDirectedGraphWidget> createState() =>
+      _ForceDirectedGraphWidgetState();
+}
+
+class _ForceDirectedGraphWidgetState extends State<_ForceDirectedGraphWidget> {
+  final controller = Get.find<GraphPlotterController>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      controller.ffdgController.needUpdate();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.find<GraphPlotterController>();
     return GestureDetector(
       onScaleStart: (ScaleStartDetails details) {
         controller.previousScale = controller.ffdgController.scale;
